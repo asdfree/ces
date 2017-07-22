@@ -11,4 +11,3 @@ Imports: survey, mitools, lodown
 Encoding: UTF-8
 LazyData: true
 Remotes: ajdamico/lodown
-
