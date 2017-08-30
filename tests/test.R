@@ -6,8 +6,8 @@ ces_cat <-
 	get_catalog( "ces" ,
 		output_dir = file.path( getwd() ) )
 
-# 2015 only
-ces_cat <- subset( ces_cat , year == 2015 )
+# 2016 only
+ces_cat <- subset( ces_cat , year == 2016 )
 # download the microdata to your local computer
 stopifnot( nrow( ces_cat ) > 0 )
 
@@ -18,23 +18,23 @@ library(mitools)
 
 # read in the five quarters of family data files (fmli)
 
-fmli151x <- readRDS( file.path( getwd() , "2015/fmli151x.rds" ) )
-fmli152 <- readRDS( file.path( getwd() , "2015/fmli152.rds" ) )
-fmli153 <- readRDS( file.path( getwd() , "2015/fmli153.rds" ) )
-fmli154 <- readRDS( file.path( getwd() , "2015/fmli154.rds" ) )
-fmli161 <- readRDS( file.path( getwd() , "2015/fmli161.rds" ) )
+fmli161x <- readRDS( file.path( getwd() , "2016/fmli161x.rds" ) )
+fmli162 <- readRDS( file.path( getwd() , "2016/fmli162.rds" ) )
+fmli163 <- readRDS( file.path( getwd() , "2016/fmli163.rds" ) )
+fmli164 <- readRDS( file.path( getwd() , "2016/fmli164.rds" ) )
+fmli171 <- readRDS( file.path( getwd() , "2016/fmli171.rds" ) )
 
-fmli151x$qtr <- 1
-fmli152$qtr <- 2
-fmli153$qtr <- 3
-fmli154$qtr <- 4
-fmli161$qtr <- 5
+fmli161x$qtr <- 1
+fmli162$qtr <- 2
+fmli163$qtr <- 3
+fmli164$qtr <- 4
+fmli171$qtr <- 5
 
-fmli161 <- fmli161[ , names( fmli151x ) ]
+fmli171 <- fmli171[ , names( fmli161x ) ]
 
-fmly <- rbind( fmli151x , fmli152 , fmli153 , fmli154 , fmli161 )
+fmly <- rbind( fmli161x , fmli162 , fmli163 , fmli164 , fmli171 )
 
-rm( fmli151x , fmli152 , fmli153 , fmli154 , fmli161 )
+rm( fmli161x , fmli162 , fmli163 , fmli164 , fmli171 )
 
 wtrep <- c( paste0( "wtrep" , stringr::str_pad( 1:44 , 2 , pad = "0" ) ) , "finlwt21" )
 
