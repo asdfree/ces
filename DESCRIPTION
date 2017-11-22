@@ -4,7 +4,7 @@ Title: ces
 Version: 0.1.0
 Author: Anthony Joseph Damico
 Maintainer: Anthony Joseph Damico <ajdamico@gmail.com>
-Description: A continuous integration package.
+Description: A continuous integration package, tested on ajdamico/asdfree commit eb672ea19a217c24a8f09bd7adead9e7c75bf687 ajdamico/lodown commit caa40c1c242c2926deebb5f1e535cc48113cd3cc
 License: GPL-3
 Imports: survey, mitools, readxl, lodown
 Encoding: UTF-8
