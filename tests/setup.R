@@ -3,6 +3,7 @@ if ( .Platform$OS.type == 'windows' ) memory.limit( 256000 )
 library(lodown)
 lodown( "ces" , output_dir = file.path( getwd() ) )
 this_sample_break <- Sys.getenv( "this_sample_break" )
+ces_cat <- get_catalog( "ces" , ces_cat )
 record_categories <- ceiling( seq( nrow( ces_cat ) ) / ceiling( nrow( ces_cat ) / 3 ) )
 ces_cat <- ces_cat[ record_categories == this_sample_break , ]
 lodown( "ces" , ces_cat )
