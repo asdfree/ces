@@ -1,7 +1,5 @@
 if ( .Platform$OS.type == 'windows' ) memory.limit( 256000 )
 
-library(lodown)
-lodown( "ces" , output_dir = file.path( getwd() ) )
 this_sample_break <- Sys.getenv( "this_sample_break" )
 ces_cat <- get_catalog( "ces" , output_dir = file.path( getwd() ) )
 record_categories <- ceiling( seq( nrow( ces_cat ) ) / ceiling( nrow( ces_cat ) / 3 ) )
@@ -17,7 +15,7 @@ ces_cat <-
 # 2016 only
 ces_cat <- subset( ces_cat , year == 2016 )
 # download the microdata to your local computer
-lodown( "ces" , ces_cat )
+
 
 options( survey.replicates.mse = TRUE )
 
