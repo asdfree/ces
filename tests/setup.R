@@ -7,17 +7,17 @@ this_sample_break <- Sys.getenv( "this_sample_break" )
 ces_cat <- get_catalog( "ces" , output_dir = file.path( getwd() ) )
 record_categories <- ceiling( seq( nrow( ces_cat ) ) / ceiling( nrow( ces_cat ) / 3 ) )
 ces_cat <- ces_cat[ record_categories == this_sample_break , ]
-lodown( "ces" , ces_cat )
+ces_cat <- lodown( "ces" , ces_cat )
 if( any( ces_cat$year == 2016 ) ){
-library(lodown)
-# examine all available CES microdata files
-ces_cat <-
-	get_catalog( "ces" ,
-		output_dir = file.path( getwd() ) )
 
-# 2016 only
-ces_cat <- subset( ces_cat , year == 2016 )
-# download the microdata to your local computer
+
+
+
+
+
+
+
+
 
 
 options( survey.replicates.mse = TRUE )
