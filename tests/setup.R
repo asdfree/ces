@@ -182,10 +182,10 @@ MIcombine( with( ces_design ,
 MIcombine( with( ces_design ,
 	svymean( ~ annexp , deff = "replace" )
 ) )
-lodown:::MIsvyciprop( ~ any_food_stamp , ces_design ,
+MIsvyciprop( ~ any_food_stamp , ces_design ,
 	method = "likelihood" )
-lodown:::MIsvyttest( annexp ~ any_food_stamp , ces_design )
-lodown:::MIsvychisq( ~ any_food_stamp + sex_ref , ces_design )
+MIsvyttest( annexp ~ any_food_stamp , ces_design )
+MIsvychisq( ~ any_food_stamp + sex_ref , ces_design )
 glm_result <- 
 	MIcombine( with( ces_design ,
 		svyglm( annexp ~ any_food_stamp + sex_ref )
