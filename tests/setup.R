@@ -20,8 +20,6 @@ if( any( ces_cat$year == 2016 ) ){
 
 
 
-options( survey.replicates.mse = TRUE )
-
 library(survey)
 library(mitools)
 
@@ -101,7 +99,8 @@ ces_design <-
 		repweights = "wtrep[0-9]+" , 
 		data = imputationList( list( imp1 , imp2 , imp3 , imp4 , imp5 ) ) , 
 		type = "BRR" ,
-		combined.weights = TRUE
+		combined.weights = TRUE ,
+		mse = TRUE
 	)
 
 rm( imp1 , imp2 , imp3 , imp4 , imp5 )
