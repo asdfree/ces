@@ -139,12 +139,17 @@ MIcombine( with( ces_design , svytotal( ~ sex_ref ) ) )
 MIcombine( with( ces_design ,
 	svyby( ~ sex_ref , ~ bls_urbn , svytotal )
 ) )
-MIcombine( with( ces_design , svyquantile( ~ annexp , 0.5 , se = TRUE ) ) )
+MIcombine( with( ces_design ,
+	svyquantile(
+		~ annexp ,
+		0.5 , se = TRUE 
+) ) )
 
 MIcombine( with( ces_design ,
-	svyby( 
-		~ annexp , ~ bls_urbn , svyquantile , 0.5 ,
-		se = TRUE , keep.var = TRUE , ci = TRUE 
+	svyby(
+		~ annexp , ~ bls_urbn , svyquantile ,
+		0.5 , se = TRUE ,
+		keep.var = TRUE , ci = TRUE 
 ) ) )
 MIcombine( with( ces_design ,
 	svyratio( numerator = ~ annexp , denominator = ~ fincbtxmi )
