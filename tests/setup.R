@@ -69,7 +69,8 @@ if( any( expenditure_variables %in% names( ces_df ) ) ) stop( "variable conflict
 
 for( this_column in expenditure_variables ){
 
-	ces_df[ , this_column ] <- rowSums( ces_df[ , paste0( this_column , c( 'pq' , 'cq' ) ) ] , na.rm = TRUE )
+	ces_df[ , this_column ] <-
+		rowSums( ces_df[ , paste0( this_column , c( 'pq' , 'cq' ) ) ] , na.rm = TRUE )
 	
 	# annualize the quarterly spending
 	ces_df[ , this_column ] <- 4 * ces_df[ , this_column ]
