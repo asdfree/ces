@@ -1,6 +1,6 @@
-# 
-# 
-# 
+# price indices and
+# you spent how much on beans, jack?
+# pocketbook issues
 library(haven)
 
 tf_prior_year <- tempfile()
@@ -54,7 +54,9 @@ ces_df <-
 
 for ( this_column in weight_columns ){
 	ces_df[ is.na( ces_df[ , this_column ] ) , this_column ] <- 0
-	ces_df[ , this_column ] <- ( ces_df[ , this_column ] * ces_df[ , 'mo_scope' ] / 12 )
+	
+	ces_df[ , paste0( 'popwt_' , this_column ) ] <- ( ces_df[ , this_column ] * ces_df[ , 'mo_scope' ] / 12 )	
+	
 }
 
 expenditure_variables <- 
@@ -78,6 +80,42 @@ for( this_column in expenditure_variables ){
 	ces_df[ is.na( ces_df[ , this_column ] ) , this_column ] <- 0
 
 }
+ucc_exp <- c( "450110" , "450210" )
+
+mtbi_files <- grep( "mtbi2[1-2]" , unzipped_files , value = TRUE )
+
+mtbi_tbls <- lapply( mtbi_files , read_dta )
+
+mtbi_dfs <- lapply( mtbi_tbls , data.frame )
+
+mtbi_dfs <- 
+	lapply( 
+		mtbi_dfs , 
+		function( w ){ names( w ) <- tolower( names( w ) ) ; w }
+	)
+
+mtbi_dfs <- lapply( mtbi_dfs , function( w ) w[ c( 'newid' , 'cost' , 'ucc' , 'ref_yr' ) ] )
+
+mtbi_df <- do.call( rbind , mtbi_dfs )
+
+mtbi_df <- subset( mtbi_df , ( ref_yr %in% 2021 ) & ( ucc %in% ucc_exp ) )
+
+mtbi_agg <- aggregate( cost ~ newid , data = mtbi_df , sum )
+
+names( mtbi_agg ) <- c( 'newid' , 'new_car_truck_exp' )
+
+before_nrow <- nrow( ces_df )
+
+ces_df <-
+	merge(
+		ces_df ,
+		mtbi_agg ,
+		all.x = TRUE
+	)
+
+stopifnot( nrow( ces_df ) == before_nrow )
+
+ces_df[ is.na( ces_df[ , 'new_car_truck_exp' ] ) , 'new_car_truck_exp' ] <- 0
 # ces_fn <- file.path( path.expand( "~" ) , "CES" , "this_file.rds" )
 # saveRDS( ces_df , file = ces_fn , compress = FALSE )
 # ces_df <- readRDS( ces_fn )
@@ -112,8 +150,8 @@ for ( i in 1:5 ){
 
 ces_design <- 
 	svrepdesign( 
-		weights = ~finlwt21 , 
-		repweights = "wtrep[0-9]+" , 
+		weights = ~ finlwt21 , 
+		repweights = "^wtrep[0-9][0-9]$" , 
 		data = imputationList( list( imp1 , imp2 , imp3 , imp4 , imp5 ) ) , 
 		type = "BRR" ,
 		combined.weights = TRUE ,
@@ -217,6 +255,25 @@ glm_result <-
 	) )
 	
 summary( glm_result )
-result <- MIcombine( with( ces_design , svytotal( ~ one ) ) )
+result <-
+	MIcombine( with( ces_design , svytotal( ~ as.numeric( popwt_finlwt21 / finlwt21 ) ) ) )
+
 stopifnot( round( coef( result ) , -3 ) == 133595000 )
 
+results <- 
+	sapply( 
+		weight_columns , 
+		function( this_column ){
+			sum( ces_df[ , 'new_car_truck_exp' ] * ces_df[ , this_column ] ) / 
+			sum( ces_df[ , paste0( 'popwt_' , this_column ) ] )
+		}
+	)
+
+stopifnot( round( results[1] , 2 ) == 2210.45 )
+
+standard_error <- sqrt( ( 1 / 44 ) * sum( ( results[-1] - results[1] )^2 ) )
+
+stopifnot( round( standard_error , 2 ) == 184.47 )
+
+# slightly differs
+MIcombine( with( ces_design , svymean( ~ cartkn ) ) )
