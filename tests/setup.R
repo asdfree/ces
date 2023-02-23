@@ -55,7 +55,8 @@ ces_df <-
 for ( this_column in weight_columns ){
 	ces_df[ is.na( ces_df[ , this_column ] ) , this_column ] <- 0
 	
-	ces_df[ , paste0( 'popwt_' , this_column ) ] <- ( ces_df[ , this_column ] * ces_df[ , 'mo_scope' ] / 12 )	
+	ces_df[ , paste0( 'popwt_' , this_column ) ] <-
+		( ces_df[ , this_column ] * ces_df[ , 'mo_scope' ] / 12 )	
 	
 }
 
@@ -275,5 +276,5 @@ standard_error <- sqrt( ( 1 / 44 ) * sum( ( results[-1] - results[1] )^2 ) )
 
 stopifnot( round( standard_error , 2 ) == 184.47 )
 
-# slightly differs
+# note the minor differences
 MIcombine( with( ces_design , svymean( ~ cartkn ) ) )
