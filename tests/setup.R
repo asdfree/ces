@@ -1,13 +1,13 @@
 # price indices and
 # you spent how much on beans, jack?
 # pocketbook issues
-library(haven)
+library(RCurl)
 
 tf_prior_year <- tempfile()
 
 this_url_prior_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw20.zip"
 
-download.file( this_url_prior_year , tf_prior_year , mode = 'wb' )
+writeBin( getBinaryURL( this_url_prior_year ) , tf_prior_year )
 
 unzipped_files_prior_year <- unzip( tf_prior_year , exdir = tempdir() )
 
@@ -15,11 +15,13 @@ tf_current_year <- tempfile()
 
 this_url_current_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw21.zip"
 
-download.file( this_url_current_year , tf_current_year , mode = 'wb' )
+writeBin( getBinaryURL( this_url_current_year ) , tf_current_year )
 
 unzipped_files_current_year <- unzip( tf_current_year , exdir = tempdir() )
 
 unzipped_files <- c( unzipped_files_current_year , unzipped_files_prior_year )
+library(haven)
+
 fmli_files <- grep( "fmli2[1-2]" , unzipped_files , value = TRUE )
 
 fmli_tbls <- lapply( fmli_files , read_dta )
