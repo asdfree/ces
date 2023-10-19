@@ -5,7 +5,7 @@ library(RCurl)
 
 tf_prior_year <- tempfile()
 
-this_url_prior_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw20.zip"
+this_url_prior_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw21.zip"
 
 writeBin( getBinaryURL( this_url_prior_year ) , tf_prior_year )
 
@@ -13,7 +13,7 @@ unzipped_files_prior_year <- unzip( tf_prior_year , exdir = tempdir() )
 
 tf_current_year <- tempfile()
 
-this_url_current_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw21.zip"
+this_url_current_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw22.zip"
 
 writeBin( getBinaryURL( this_url_current_year ) , tf_current_year )
 
@@ -22,7 +22,7 @@ unzipped_files_current_year <- unzip( tf_current_year , exdir = tempdir() )
 unzipped_files <- c( unzipped_files_current_year , unzipped_files_prior_year )
 library(haven)
 
-fmli_files <- grep( "fmli2[1-2]" , unzipped_files , value = TRUE )
+fmli_files <- grep( "fmli2[2-3]" , unzipped_files , value = TRUE )
 
 fmli_tbls <- lapply( fmli_files , read_dta )
 
@@ -50,8 +50,8 @@ ces_df <-
 	transform(
 		ces_df ,
 		mo_scope =
-			ifelse( qintrvyr %in% 2021 & qintrvmo %in% 1:3 , qintrvmo - 1 ,
-			ifelse( qintrvyr %in% 2022 , 4 - qintrvmo , 3 ) )
+			ifelse( qintrvyr %in% 2022 & qintrvmo %in% 1:3 , qintrvmo - 1 ,
+			ifelse( qintrvyr %in% 2023 , 4 - qintrvmo , 3 ) )
 	)
 
 for ( this_column in weight_columns ){
@@ -85,7 +85,7 @@ for( this_column in expenditure_variables ){
 }
 ucc_exp <- c( "450110" , "450210" )
 
-mtbi_files <- grep( "mtbi2[1-2]" , unzipped_files , value = TRUE )
+mtbi_files <- grep( "mtbi2[2-3]" , unzipped_files , value = TRUE )
 
 mtbi_tbls <- lapply( mtbi_files , read_dta )
 
@@ -101,7 +101,7 @@ mtbi_dfs <- lapply( mtbi_dfs , function( w ) w[ c( 'newid' , 'cost' , 'ucc' , 'r
 
 mtbi_df <- do.call( rbind , mtbi_dfs )
 
-mtbi_df <- subset( mtbi_df , ( ref_yr %in% 2021 ) & ( ucc %in% ucc_exp ) )
+mtbi_df <- subset( mtbi_df , ( ref_yr %in% 2022 ) & ( ucc %in% ucc_exp ) )
 
 mtbi_agg <- aggregate( cost ~ newid , data = mtbi_df , sum )
 
@@ -153,7 +153,7 @@ for ( i in 1:5 ){
 
 ces_design <- 
 	svrepdesign( 
-		weights = ~ finlwt21 , 
+		weights = ~ finlwt22 , 
 		repweights = "^wtrep[0-9][0-9]$" , 
 		data = imputationList( list( imp1 , imp2 , imp3 , imp4 , imp5 ) ) , 
 		type = "BRR" ,
@@ -261,7 +261,7 @@ summary( glm_result )
 result <-
 	MIcombine( with( ces_design , svytotal( ~ as.numeric( popwt_finlwt21 / finlwt21 ) ) ) )
 
-stopifnot( round( coef( result ) , -3 ) == 133595000 )
+stopifnot( round( coef( result ) , -3 ) == 134090000 )
 
 results <- 
 	sapply( 
@@ -272,11 +272,11 @@ results <-
 		}
 	)
 
-stopifnot( round( results[1] , 2 ) == 2210.45 )
+stopifnot( round( results[1] , 2 ) == 2195.30 )
 
 standard_error <- sqrt( ( 1 / 44 ) * sum( ( results[-1] - results[1] )^2 ) )
 
-stopifnot( round( standard_error , 2 ) == 184.47 )
+stopifnot( round( standard_error , 2 ) == 174.02 )
 
 # note the minor differences
 MIcombine( with( ces_design , svymean( ~ cartkn ) ) )
