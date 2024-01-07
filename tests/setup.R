@@ -1,13 +1,15 @@
 # price indices and
 # you spent how much on beans, jack?
 # pocketbook issues
-library(RCurl)
+library(httr)
 
 tf_prior_year <- tempfile()
 
 this_url_prior_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw21.zip"
 
-writeBin( getBinaryURL( this_url_prior_year ) , tf_prior_year )
+dl_prior_year <- GET( this_url_prior_year , user_agent( "email@address.com" ) )
+
+writeBin( content( dl_prior_year ) , tf_prior_year )
 
 unzipped_files_prior_year <- unzip( tf_prior_year , exdir = tempdir() )
 
@@ -15,7 +17,9 @@ tf_current_year <- tempfile()
 
 this_url_current_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw22.zip"
 
-writeBin( getBinaryURL( this_url_current_year ) , tf_current_year )
+dl_current_year <- GET( this_url_current_year , user_agent( "email@address.com" ) )
+
+writeBin( content( dl_current_year ) , tf_current_year )
 
 unzipped_files_current_year <- unzip( tf_current_year , exdir = tempdir() )
 
