@@ -5,7 +5,7 @@ library(httr)
 
 tf_prior_year <- tempfile()
 
-this_url_prior_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw21.zip"
+this_url_prior_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw22.zip"
 
 dl_prior_year <- GET( this_url_prior_year , user_agent( "email@address.com" ) )
 
@@ -15,7 +15,7 @@ unzipped_files_prior_year <- unzip( tf_prior_year , exdir = tempdir() )
 
 tf_current_year <- tempfile()
 
-this_url_current_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw22.zip"
+this_url_current_year <- "https://www.bls.gov/cex/pumd/data/stata/intrvw23.zip"
 
 dl_current_year <- GET( this_url_current_year , user_agent( "email@address.com" ) )
 
@@ -26,7 +26,7 @@ unzipped_files_current_year <- unzip( tf_current_year , exdir = tempdir() )
 unzipped_files <- c( unzipped_files_current_year , unzipped_files_prior_year )
 library(haven)
 
-fmli_files <- grep( "fmli2[2-3]" , unzipped_files , value = TRUE )
+fmli_files <- grep( "fmli2[3-4]" , unzipped_files , value = TRUE )
 
 fmli_tbls <- lapply( fmli_files , read_dta )
 
@@ -54,8 +54,8 @@ ces_df <-
 	transform(
 		ces_df ,
 		mo_scope =
-			ifelse( qintrvyr %in% 2022 & qintrvmo %in% 1:3 , qintrvmo - 1 ,
-			ifelse( qintrvyr %in% 2023 , 4 - qintrvmo , 3 ) )
+			ifelse( qintrvyr %in% 2023 & qintrvmo %in% 1:3 , qintrvmo - 1 ,
+			ifelse( qintrvyr %in% 2024 , 4 - qintrvmo , 3 ) )
 	)
 
 for ( this_column in weight_columns ){
@@ -89,7 +89,7 @@ for( this_column in expenditure_variables ){
 }
 ucc_exp <- c( "450110" , "450210" )
 
-mtbi_files <- grep( "mtbi2[2-3]" , unzipped_files , value = TRUE )
+mtbi_files <- grep( "mtbi2[3-4]" , unzipped_files , value = TRUE )
 
 mtbi_tbls <- lapply( mtbi_files , read_dta )
 
@@ -105,7 +105,7 @@ mtbi_dfs <- lapply( mtbi_dfs , function( w ) w[ c( 'newid' , 'cost' , 'ucc' , 'r
 
 mtbi_df <- do.call( rbind , mtbi_dfs )
 
-mtbi_df <- subset( mtbi_df , ( ref_yr %in% 2022 ) & ( ucc %in% ucc_exp ) )
+mtbi_df <- subset( mtbi_df , ( ref_yr %in% 2023 ) & ( ucc %in% ucc_exp ) )
 
 mtbi_agg <- aggregate( cost ~ newid , data = mtbi_df , sum )
 
@@ -265,7 +265,7 @@ summary( glm_result )
 result <-
 	MIcombine( with( ces_design , svytotal( ~ as.numeric( popwt_finlwt21 / finlwt21 ) ) ) )
 
-stopifnot( round( coef( result ) , -3 ) == 134090000 )
+stopifnot( round( coef( result ) , -3 ) == 134556000 )
 
 results <- 
 	sapply( 
@@ -276,11 +276,11 @@ results <-
 		}
 	)
 
-stopifnot( round( results[1] , 2 ) == 2195.30 )
+stopifnot( round( results[1] , 2 ) == 2896.03 )
 
 standard_error <- sqrt( ( 1 / 44 ) * sum( ( results[-1] - results[1] )^2 ) )
 
-stopifnot( round( standard_error , 2 ) == 174.02 )
+stopifnot( round( standard_error , 2 ) == 225.64 )
 
 # note the minor differences
 MIcombine( with( ces_design , svymean( ~ cartkn ) ) )
